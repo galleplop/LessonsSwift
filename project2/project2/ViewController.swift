@@ -27,7 +27,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading th( view.
         
-        countries += ["Estonia", "France", "Germany", "Irland", "Italy", "Monaco", "Nigeria", "Potlan", "Russia", "Spain", "UK", "US"]
+        countries += ["Estonia", "France", "Germany", "Ireland", "Italy", "Monaco", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"]
         
         buttonStyle(button: btn1)
         buttonStyle(button: btn2)
