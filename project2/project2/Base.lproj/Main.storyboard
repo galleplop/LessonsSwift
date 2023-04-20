@@ -65,7 +65,13 @@
                             <constraint firstItem="AvD-Am-t3l" firstAttribute="trailing" secondItem="K5f-rd-S7r" secondAttribute="trailing" id="vZg-Dh-mj1"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="POR-UZ-PeK"/>
+                    <navigationItem key="navigationItem" id="POR-UZ-PeK">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="zms-fr-qXH">
+                            <connections>
+                                <action selector="donePresed:" destination="BYZ-38-t0r" id="f6w-E4-n10"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="btn1" destination="hHU-e0-xBC" id="LMH-YH-Kye"/>
                         <outlet property="btn2" destination="AvD-Am-t3l" id="o9x-Jc-fGi"/>

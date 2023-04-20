@@ -38,11 +38,21 @@ class ViewController: UIViewController {
         
     }
 
+    @IBAction func donePresed(_ sender: Any) {
+        
+        let alert = UIAlertController(title: title, message: "Your final score is \(score)/\(questions)", preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Reset Game", style: .default, handler: resetGame))
+        
+        present(alert, animated: true)
+    }
+    
     func askQuestion(action: UIAlertAction! = nil) {
         
         questions += 1
         countries.shuffle()
-        print(countries)
+//        print(countries)
         correctAnswer = Int.random(in: 0...2)
         
         btn1.setImage(UIImage(named: countries[0].lowercased()), for: .normal)
