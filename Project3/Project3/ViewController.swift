@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import StoreKit
+//import DetailViewController
 
 class ViewController: UITableViewController {
 
@@ -35,18 +35,6 @@ class ViewController: UITableViewController {
       
         title = "Storm Viewer"
         navigationController?.navigationBar.prefersLargeTitles = true
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(recomendApp))
-    }
-    
-    @objc func recomendApp() {
-        if #available(iOS 10.3, *) {
-            if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-                DispatchQueue.main.async {
-                    SKStoreReviewController.requestReview(in: scene)
-                }
-            }
-        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
