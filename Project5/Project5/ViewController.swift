@@ -16,7 +16,7 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        
+        navigationItem.rightBarButtonItem =  UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promperForAnswer))
         
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
             
@@ -43,6 +43,10 @@ class ViewController: UITableViewController {
     
     
     override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return usedWords.count
     }
     
@@ -55,5 +59,53 @@ class ViewController: UITableViewController {
         return cell
     }
 
+    
+    @objc func promperForAnswer() {
+        
+        let ac = UIAlertController(title: "Enter answer", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        
+        let submitAction = UIAlertAction(title: "Submit", style: .default) {
+            [weak self, weak ac] alertAction in
+            
+            guard let answer = ac?.textFields?[0].text else {return}
+            self?.submit(answer)
+        }
+        
+        ac.addAction(submitAction)
+        present(ac, animated: true)
+    }
+    
+    func submit(_ textSubmit: String) {
+        
+        let lowerAnswer = textSubmit.lowercased()
+        
+        if isPossible(word: lowerAnswer){
+            if isOriginal(word: lowerAnswer) {
+                if isReal(word: lowerAnswer) {
+                    
+                    usedWords.insert(textSubmit, at: 0)
+                    let indexPath = IndexPath(row: 0, section: 0)
+                    tableView.insertRows(at: [indexPath], with: .automatic)
+                }
+            }
+        }
+    }
+    
+    func isPossible(word: String) -> Bool {
+        
+        return true
+    }
+    
+    func isOriginal(word: String) -> Bool {
+        
+        return true
+    }
+    
+    func isReal(word: String) -> Bool {
+        
+        return true
+    }
+    
 }
 
