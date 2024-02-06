@@ -18,6 +18,8 @@ class ViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem =  UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(promperForAnswer))
         
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh, target: self, action: #selector(startGame))
+        
         if let startWordsURL = Bundle.main.url(forResource: "start", withExtension: "txt") {
             
             if let startWords = try? String(contentsOf: startWordsURL) {
@@ -34,7 +36,7 @@ class ViewController: UITableViewController {
         startGame()
     }
     
-    func startGame() {
+    @objc func startGame() {
         
         title = allWords.randomElement()
         usedWords.removeAll(keepingCapacity: true)
@@ -76,6 +78,13 @@ class ViewController: UITableViewController {
         present(ac, animated: true)
     }
     
+    fileprivate func showErrorMessage(_ errorTitle: String, _ errorMessage: String) {
+        
+        let alert = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
     func submit(_ textSubmit: String) {
         
         let lowerAnswer = textSubmit.lowercased()
@@ -83,34 +92,58 @@ class ViewController: UITableViewController {
         let errorTitle : String
         let errorMessage : String
         
-        if isPossible(word: lowerAnswer){
-            if isOriginal(word: lowerAnswer) {
-                if isReal(word: lowerAnswer) {
-                    
-                    usedWords.insert(textSubmit, at: 0)
-                    let indexPath = IndexPath(row: 0, section: 0)
-                    tableView.insertRows(at: [indexPath], with: .automatic)
-                    
-                    return
+        if !isTooShort(word: lowerAnswer) {
+            if !isStartWord(word: lowerAnswer) {
+                if isPossible(word: lowerAnswer){
+                    if isOriginal(word: lowerAnswer) {
+                        if isReal(word: lowerAnswer) {
+                            
+                            usedWords.insert(lowerAnswer, at: 0)
+                            let indexPath = IndexPath(row: 0, section: 0)
+                            tableView.insertRows(at: [indexPath], with: .automatic)
+                            
+                            return
+                        } else {
+                            
+                            errorTitle = "Word not recognized"
+                            errorMessage = "You can't just make them up, you know!"
+                        }
+                    } else {
+                        
+                        errorTitle = "Word already used"
+                        errorMessage = "Be more original!"
+                    }
                 } else {
                     
-                    errorTitle = "Word not recognized"
-                    errorMessage = "You can't just make them up, you know!"
+                    errorTitle = "Word not posible"
+                    errorMessage = "You can't spell that word from \(title!.lowercased())."
                 }
             } else {
                 
-                errorTitle = "Word already used"
-                errorMessage = "Be more original!"
+                errorTitle = "Word is the start word"
+                errorMessage = "Be more creative"
             }
         } else {
             
-            errorTitle = "Word not posible"
-            errorMessage = "You can't spell that word from \(title!.lowercased())."
+            errorTitle = "Word is too short"
+            errorMessage = "Word needs to be greater than 2 letters"
         }
         
-        let alert = UIAlertController(title: errorTitle, message: errorMessage, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        
+        
+        showErrorMessage(errorTitle, errorMessage)
+    }
+    
+    func isTooShort(word: String) -> Bool {
+        
+        return word.count < 3
+    }
+    
+    func isStartWord(word: String) -> Bool {
+        
+        guard let tempWord = title?.lowercased() else {return false}
+        
+        return tempWord.hasPrefix(word)
     }
     
     func isPossible(word: String) -> Bool {
