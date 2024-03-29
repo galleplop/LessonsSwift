@@ -25,16 +25,38 @@ class ViewController: UITableViewController {
             urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
         }
         
-        
         if let url = URL(string: urlString) {
-            if let data = try? Data(contentsOf: url) {
-                //Parse data
-                self.parse(json: data)
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 
-            } else {
+                if let error = error {
+                    
+                    print("error web \(error.localizedDescription)")
+                    self.showError()
+                    
+                    return
+                }
                 
-                showError()
+                if let data = data {
+                    
+                    self.parse(json: data)
+                    
+                    DispatchQueue.main.async {
+                        
+                        self.tableView.reloadData()
+                    }
+                    
+                } else {
+                    print("no data recibed")
+                    self.showError()
+                }
+                
             }
+            
+            task.resume()
         } else {
             
             showError()
@@ -48,7 +70,6 @@ class ViewController: UITableViewController {
         if let jsonPetitions = try? decoder.decode(Petitions.self, from: json) {
             
             petitions = jsonPetitions.results
-            tableView.reloadData()
         }
     }
 
