@@ -27,11 +27,30 @@ class DetailViewController: UIViewController {
         let html = """
         <html>
         <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <style> body { font-size: 150%; } </style>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Título de tu página</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    font-size: 100%;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding: 0;
+                }
+                .container {
+                    width: 90%;
+                    max-width: 600px; /* Establece un ancho máximo para que el texto no se extienda demasiado en pantallas grandes */
+                    margin: 1 auto;
+                    padding: 20px;
+                }
+            </style>
         </head>
         <body>
-        \(detailItem.body)
+            <div class="container">
+                <h1>\(detailItem.title)</h1>
+                <p>\(detailItem.body)</p>
+            </div>
         </body>
         </html>
         """

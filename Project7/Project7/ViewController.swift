@@ -15,6 +15,9 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        
+        
+        
         let urlString: String
         
         if navigationController?.tabBarItem.tag == 0 {
@@ -80,6 +83,9 @@ class ViewController: UITableViewController {
         self.present(ac, animated: true)
     }
 
+    //MARK: -
+    //MARK: TableView Delegates
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return petitions.count
