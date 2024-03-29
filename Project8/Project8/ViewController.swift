@@ -68,12 +68,20 @@ class ViewController: UIViewController {
         submit.translatesAutoresizingMaskIntoConstraints = false
         submit.setTitle("SUBMIT", for: .normal)
         submit.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
+        
+        submit.layer.borderWidth = 1
+        submit.layer.borderColor = UIColor.lightGray.cgColor
+        
         view.addSubview(submit)
         
         let clear = UIButton(type: .system)
         clear.translatesAutoresizingMaskIntoConstraints = false
         clear.setTitle("CLEAR", for: .normal)
         clear.addTarget(self, action: #selector(clearTapped), for: .touchUpInside)
+        
+        clear.layer.borderWidth = 1
+        clear.layer.borderColor = UIColor.lightGray.cgColor
+        
         view.addSubview(clear)
         
         let buttonView = UIView()
@@ -121,6 +129,9 @@ class ViewController: UIViewController {
                 letterButton.titleLabel?.font = UIFont.systemFont(ofSize: 36)
                 letterButton.setTitle("WWW", for: .normal)
                 letterButton.addTarget(self, action: #selector(letterTapped), for: .touchUpInside)
+                
+                letterButton.layer.borderWidth = 1
+                letterButton.layer.borderColor = UIColor.lightGray.cgColor
                 
                 let frame = CGRect(x: column * width, y: row * height, width: width, height: height)
                 letterButton.frame = frame
@@ -176,6 +187,16 @@ class ViewController: UIViewController {
                 self.present(ac, animated: true)
                 
             }
+        } else {
+            
+            let ac = UIAlertController(title: "Incorrect answer", message: "Try again", preferredStyle: .alert)
+            
+            let action = UIAlertAction(title: "OK", style: .default) {_ in 
+                
+                self.clearAnswerd()
+            }
+            ac.addAction(action)
+            self.present(ac, animated: true)
         }
         
     }
@@ -194,6 +215,11 @@ class ViewController: UIViewController {
     }
     
     @objc func clearTapped(_ sender: UIButton) {
+        
+        self.clearAnswerd()
+    }
+    
+    func clearAnswerd() {
         
         currentAnswer.text = ""
         
