@@ -179,7 +179,7 @@ class ViewController: UIViewController {
             currentAnswer.text = ""
             score += 1
             
-            if score % 7 == 0 {
+            if self.isGameCompleted() {
                 
                 let ac = UIAlertController(title: "Well done!", message: "Are you ready for the next level?", preferredStyle: .alert)
                 
@@ -189,9 +189,11 @@ class ViewController: UIViewController {
             }
         } else {
             
-            let ac = UIAlertController(title: "Incorrect answer", message: "Try again", preferredStyle: .alert)
+            let ac = UIAlertController(title: "Incorrect answer", message: "You lost a point. Try again!", preferredStyle: .alert)
             
             let action = UIAlertAction(title: "OK", style: .default) {_ in 
+                
+                self.score -= 1
                 
                 self.clearAnswerd()
             }
@@ -228,6 +230,11 @@ class ViewController: UIViewController {
         }
         
         activatedButtons.removeAll()
+    }
+    
+    func isGameCompleted() -> Bool {
+        
+        return letterButtons.allSatisfy{$0.isHidden}
     }
     
     func loadLevel() {
