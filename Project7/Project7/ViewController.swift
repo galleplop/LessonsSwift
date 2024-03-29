@@ -15,7 +15,7 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Credits", style: .plain, target: self, action: #selector(showCredits))
         
         
         let urlString: String
@@ -82,6 +82,14 @@ class ViewController: UITableViewController {
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         self.present(ac, animated: true)
     }
+    
+    @objc func showCredits() {
+        
+        let ac = UIAlertController(title: "Credits", message: "The People API of the Whitehouse website", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(ac, animated: true)
+    }
+    
 
     //MARK: -
     //MARK: TableView Delegates
