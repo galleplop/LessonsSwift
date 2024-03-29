@@ -15,14 +15,29 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        let urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+        let urlString: String
+        
+        if navigationController?.tabBarItem.tag == 0 {
+            
+            urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+        } else {
+            
+            urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
+        }
+        
         
         if let url = URL(string: urlString) {
             if let data = try? Data(contentsOf: url) {
                 //Parse data
                 self.parse(json: data)
                 
+            } else {
+                
+                showError()
             }
+        } else {
+            
+            showError()
         }
     }
     
@@ -37,6 +52,12 @@ class ViewController: UITableViewController {
         }
     }
 
+    func showError() {
+        
+        let ac = UIAlertController(title: "Loading error", message: "There was a problem loading the feed; please check your connection and try again", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(ac, animated: true)
+    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
