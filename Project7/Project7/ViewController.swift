@@ -10,6 +10,9 @@ import UIKit
 class ViewController: UITableViewController {
 
     var petitions = [Petition]()
+    var filteredPetitions = [Petition]()
+    
+    var isFiltered = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,6 +20,10 @@ class ViewController: UITableViewController {
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Credits", style: .plain, target: self, action: #selector(showCredits))
         
+        let cleanBtn = UIBarButtonItem(title: "Clean", style: .plain, target: self, action: #selector(cleanButton))
+        let filterBtn = UIBarButtonItem(title: "Filter", style: .plain, target: self, action: #selector(filterButton))
+        
+        navigationItem.leftBarButtonItems = [filterBtn, cleanBtn]
         
         let urlString: String
         
@@ -90,20 +97,51 @@ class ViewController: UITableViewController {
         self.present(ac, animated: true)
     }
     
+    @objc func cleanButton() {
+        
+        isFiltered = false
+        filteredPetitions = []
+        self.tableView.reloadData()
+    }
+    
+    @objc func filterButton() {
+        
+        let ac = UIAlertController(title: "Enter filter text", message: nil, preferredStyle: .alert)
+        ac.addTextField()
+        
+        let submitAction = UIAlertAction(title: "Submit", style: .default) {
+            [weak self, weak ac] alertAction in
+            
+            guard let filter = ac?.textFields?[0].text else {return}
+            self?.filterPetition(text:filter.lowercased())
+        }
+        
+        ac.addAction(submitAction)
+        present(ac, animated: true)
+    }
+    
+    func filterPetition(text: String) {
+        
+        filteredPetitions = petitions.filter{ $0.title.lowercased().contains(text) || $0.body.lowercased().contains(text) }
+        
+        isFiltered = true
+        
+        self.tableView.reloadData()
+    }
 
     //MARK: -
     //MARK: TableView Delegates
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return petitions.count
+        return isFiltered ? filteredPetitions.count:petitions.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         
-        let rowPetition = petitions[indexPath.row]
+        let rowPetition = isFiltered ? filteredPetitions[indexPath.row]:petitions[indexPath.row]
         
         cell.textLabel?.text = rowPetition.title
         cell.detailTextLabel?.text = rowPetition.body
@@ -113,7 +151,7 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = DetailViewController()
-        vc.detailItem = petitions[indexPath.row]
+        vc.detailItem = isFiltered ? filteredPetitions[indexPath.row]:petitions[indexPath.row]
         
         navigationController?.pushViewController(vc, animated: true)
     }
