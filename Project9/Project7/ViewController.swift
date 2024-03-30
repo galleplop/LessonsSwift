@@ -25,11 +25,6 @@ class ViewController: UITableViewController {
         
         navigationItem.leftBarButtonItems = [filterBtn, cleanBtn]
         
-        performSelector(inBackground: #selector(fetchJSON), with: nil)
-    }
-    
-    @objc func fetchJSON() {
-        
         let urlString: String
         
         if navigationController?.tabBarItem.tag == 0 {
@@ -39,6 +34,11 @@ class ViewController: UITableViewController {
             
             urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
         }
+        
+        performSelector(inBackground: #selector(fetchJSON), with: urlString)
+    }
+    
+    @objc func fetchJSON(urlString: String) {
         
         if let url = URL(string: urlString) {
             
@@ -59,7 +59,13 @@ class ViewController: UITableViewController {
         if let jsonPetitions = try? decoder.decode(Petitions.self, from: json) {
             
             petitions = jsonPetitions.results
-            tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+            
+            DispatchQueue.main.async { [weak self] in
+                
+                self?.tableView.reloadData()
+            }
+            
+//            self.tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
         } else {
             
             performSelector(onMainThread: #selector(showError), with: nil, waitUntilDone: false)
@@ -96,20 +102,26 @@ class ViewController: UITableViewController {
             [weak self, weak ac] alertAction in
             
             guard let filter = ac?.textFields?[0].text else {return}
-            self?.filterPetition(text:filter.lowercased())
+//            self?.filterPetition(text:filter.lowercased())
+            self?.performSelector(inBackground: #selector(self?.filterPetition), with: filter.lowercased())
         }
         
         ac.addAction(submitAction)
         present(ac, animated: true)
     }
     
-    func filterPetition(text: String) {
+    @objc func filterPetition(text: String) {
         
         filteredPetitions = petitions.filter{ $0.title.lowercased().contains(text) || $0.body.lowercased().contains(text) }
         
         isFiltered = true
         
-        self.tableView.reloadData()
+//        self.tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+        
+        DispatchQueue.main.async { [weak self] in
+            
+            self?.tableView.reloadData()
+        }
     }
 
     //MARK: -

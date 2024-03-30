@@ -16,6 +16,15 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        performSelector(inBackground: #selector(loadPictures), with: nil)
+        title = "Storm Viewer"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(recomendApp))
+    }
+    
+    @objc func loadPictures() {
+        
         let fm = FileManager.default
         let path = Bundle.main.resourcePath!
         let items = try! fm.contentsOfDirectory(atPath: path)
@@ -31,12 +40,11 @@ class ViewController: UITableViewController {
         
         pictures.sort(by: <)
         
-//        ViewController?.view.tit
-      
-        title = "Storm Viewer"
-        navigationController?.navigationBar.prefersLargeTitles = true
+        DispatchQueue.main.async { [weak self] in
+            
+            self?.tableView.reloadData()
+        }
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(recomendApp))
     }
     
     @objc func recomendApp() {
