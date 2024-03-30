@@ -61,20 +61,37 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
         let person = people[indexPath.item]
         
-        let ac = UIAlertController(title: "Rename person", message: nil, preferredStyle: .alert)
-        ac.addTextField()
+        let alertController = UIAlertController(title: "Selec an action", message: nil, preferredStyle: .alert)
         
-        ac.addAction(UIAlertAction(title: "OK", style: .default) { [weak self, weak ac] _ in
+        alertController.addAction(UIAlertAction(title: "Rename", style: .default) { [weak self] _ in
             
-            guard let newName = ac?.textFields?[0].text else { return }
-            person.name = newName
-            self?.collectionView.reloadData()
+            let ac = UIAlertController(title: "Rename person", message: nil, preferredStyle: .alert)
+            ac.addTextField()
+            
+            ac.addAction(UIAlertAction(title: "OK", style: .default) { [weak self, weak ac] _ in
+                
+                guard let newName = ac?.textFields?[0].text else { return }
+                person.name = newName
+                self?.collectionView.reloadData()
+                
+            })
+            
+            ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+            
+            self?.present(ac, animated: true)
             
         })
         
-        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alertController.addAction(UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
+            
+            self?.people.remove(at: indexPath.item)
+            self?.collectionView.reloadData()
+        })
         
-        self.present(ac, animated: true)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        self.present(alertController, animated: true)
+        
     }
     
     //MARK: - UIImagePickerControllerDelegate Delegate
