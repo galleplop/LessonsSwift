@@ -25,6 +25,11 @@ class ViewController: UITableViewController {
         
         navigationItem.leftBarButtonItems = [filterBtn, cleanBtn]
         
+        performSelector(inBackground: #selector(fetchJSON), with: nil)
+    }
+    
+    @objc func fetchJSON() {
+        
         let urlString: String
         
         if navigationController?.tabBarItem.tag == 0 {
@@ -35,25 +40,16 @@ class ViewController: UITableViewController {
             urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
         }
         
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+        if let url = URL(string: urlString) {
             
-            if let url = URL(string: urlString) {
+            if let data = try? Data(contentsOf: url){
                 
-                if let data = try? Data(contentsOf: url){
-                    
-                    self?.parse(json: data)
-                    
-                    DispatchQueue.main.async {
-                        
-                        self?.tableView.reloadData()
-                    }
-                    
-                    return
-                }
+                self.parse(json: data)
+                return
             }
-            
-            self?.showError()
         }
+        
+        performSelector(onMainThread: #selector(showError), with: nil, waitUntilDone: false)
     }
     
     func parse(json: Data) {
@@ -63,17 +59,18 @@ class ViewController: UITableViewController {
         if let jsonPetitions = try? decoder.decode(Petitions.self, from: json) {
             
             petitions = jsonPetitions.results
+            tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+        } else {
+            
+            performSelector(onMainThread: #selector(showError), with: nil, waitUntilDone: false)
         }
     }
 
-    func showError() {
+    @objc func showError() {
         
-        DispatchQueue.main.async { [weak self] in
-            
-            let ac = UIAlertController(title: "Loading error", message: "There was a problem loading the feed; please check your connection and try again", preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            self?.present(ac, animated: true)
-        }
+        let ac = UIAlertController(title: "Loading error", message: "There was a problem loading the feed; please check your connection and try again", preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        self.present(ac, animated: true)
     }
     
     @objc func showCredits() {
