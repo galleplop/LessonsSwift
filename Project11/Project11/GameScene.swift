@@ -88,11 +88,34 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             } else {
                 //Create a ball
                 
-                let ball = SKSpriteNode(imageNamed: "ballRed")
+                let ballName : String
+                
+                let randomNumber = Int.random(in: 0...6)
+
+                switch randomNumber {
+                case 0:
+                    ballName = "ballBlue"
+                case 1:
+                    ballName = "ballCyan"
+                case 2:
+                    ballName = "ballGreen"
+                case 3:
+                    ballName = "ballGrey"
+                case 4:
+                    ballName = "ballPurple"
+                case 5:
+                    ballName = "ballRed"
+                case 6:
+                    ballName = "ballYellow"
+                default:
+                    ballName = "ballRed"
+                }
+                
+                let ball = SKSpriteNode(imageNamed: ballName)
                 ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2.0)
                 ball.physicsBody?.restitution = 0.4
                 ball.physicsBody?.contactTestBitMask = ball.physicsBody?.collisionBitMask ?? 0
-                ball.position = location
+                ball.position = CGPoint(x: location.x, y: 700)
                 ball.name = "ball"
                 addChild(ball)
             }
