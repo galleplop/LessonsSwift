@@ -29,6 +29,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    var ballLabel: SKLabelNode!
+
+    var ballCount = 0 {
+        didSet {
+            ballLabel.text = "Balls: \(ballCount)"
+        }
+    }
+    
+    
     override func didMove(to view: SKView) {
         
         let background = SKSpriteNode(imageNamed: "background")
@@ -50,6 +59,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         editLabel.text = "Edit"
         editLabel.position = CGPoint(x: 80, y: 700)
         addChild(editLabel)
+        
+        ballLabel = SKLabelNode(fontNamed: "Chalkduster")
+        ballLabel.text = "Balls: "
+        ballLabel.position = CGPoint(x: 100, y: 620)
+        addChild(ballLabel)
+        
+        ballCount = 5
         
         makeSlot(at: CGPoint(x: 128, y: 0), isGood: true)
         makeSlot(at: CGPoint(x: 384, y: 0), isGood: false)
@@ -84,40 +100,61 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 box.physicsBody = SKPhysicsBody(rectangleOf: box.size)
                 box.physicsBody?.isDynamic = false
+                box.name = "obstacle"
                 addChild(box)
             } else {
                 //Create a ball
                 
-                let ballName : String
-                
-                let randomNumber = Int.random(in: 0...6)
+                if ballCount <= 0 {
+                    
+                    let ac = UIAlertController(title: "You don't have more balls", message: "Do you want to play again?", preferredStyle: .alert)
+                    
+                    ac.addAction(UIAlertAction(title: "Reload", style: .default) { [weak self] _ in
+                        
+                        self?.reloadGame()
+                    })
+                    
+                    ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                    
+                    guard let viewController = view?.window?.rootViewController else { return }
+                    
+                    viewController.present(ac, animated: true)
+                    
+                } else {
+                    
+                    ballCount -= 1
+                    let ballName : String
+                    
+                    let randomNumber = Int.random(in: 0...6)
 
-                switch randomNumber {
-                case 0:
-                    ballName = "ballBlue"
-                case 1:
-                    ballName = "ballCyan"
-                case 2:
-                    ballName = "ballGreen"
-                case 3:
-                    ballName = "ballGrey"
-                case 4:
-                    ballName = "ballPurple"
-                case 5:
-                    ballName = "ballRed"
-                case 6:
-                    ballName = "ballYellow"
-                default:
-                    ballName = "ballRed"
+                    switch randomNumber {
+                    case 0:
+                        ballName = "ballBlue"
+                    case 1:
+                        ballName = "ballCyan"
+                    case 2:
+                        ballName = "ballGreen"
+                    case 3:
+                        ballName = "ballGrey"
+                    case 4:
+                        ballName = "ballPurple"
+                    case 5:
+                        ballName = "ballRed"
+                    case 6:
+                        ballName = "ballYellow"
+                    default:
+                        ballName = "ballRed"
+                    }
+                    
+                    let ball = SKSpriteNode(imageNamed: ballName)
+                    ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2.0)
+                    ball.physicsBody?.restitution = 0.4
+                    ball.physicsBody?.contactTestBitMask = ball.physicsBody?.collisionBitMask ?? 0
+                    ball.position = CGPoint(x: location.x, y: 700)
+                    ball.name = "ball"
+                    addChild(ball)
                 }
                 
-                let ball = SKSpriteNode(imageNamed: ballName)
-                ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 2.0)
-                ball.physicsBody?.restitution = 0.4
-                ball.physicsBody?.contactTestBitMask = ball.physicsBody?.collisionBitMask ?? 0
-                ball.position = CGPoint(x: location.x, y: 700)
-                ball.name = "ball"
-                addChild(ball)
             }
         }
     }
@@ -125,6 +162,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         // Called before each frame is rendered
     }
+    
+    func reloadGame() {
+        
+        score = 0
+        ballCount = 5
+        editingMode = false
+        
+        let allNodes = view?.scene?.children
+        if let nodes = allNodes {
+            
+            for node in nodes {
+                
+                if node.name == "obstacle" {
+                    
+                    node.removeFromParent()
+                }
+            }
+        }
+    }
+    
     
     func makeBouncer(at position: CGPoint) {
         
@@ -174,10 +231,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             destroy(ball: ball)
             score += 1
+            ballCount += 1
         } else if object.name == "Bad" {
             
             destroy(ball: ball)
             score -= 1
+        } else if object.name == "obstacle" {
+            
+            object.removeFromParent()
         }
     }
     
