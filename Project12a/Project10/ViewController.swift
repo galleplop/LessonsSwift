@@ -16,6 +16,16 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         // Do any additional setup after loading the view.
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewPerson))
+        
+        let defaults = UserDefaults.standard
+        
+        if let savedPeople = defaults.object(forKey: "people") as? Data {
+            if let decodePeople = NSKeyedUnarchiver.unarchiveObject(with: savedPeople) as? [Person]{
+                
+//                print(decodePeople)
+                people = decodePeople
+            }
+        }
     }
 
     @objc func addNewPerson() {
@@ -30,6 +40,15 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
         let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return path[0]
+    }
+    
+    func save() {
+        
+        if let savedData = try? NSKeyedArchiver.archivedData(withRootObject: people, requiringSecureCoding: false) {
+            
+            let defaults = UserDefaults.standard
+            defaults.set(savedData, forKey: "people")
+        }
     }
     
     //MARK: - UICollectionViewController Delegate
@@ -61,7 +80,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
         let person = people[indexPath.item]
         
-        let alertController = UIAlertController(title: "Selec an action", message: nil, preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Select an action", message: nil, preferredStyle: .alert)
         
         alertController.addAction(UIAlertAction(title: "Rename", style: .default) { [weak self] _ in
             
@@ -72,6 +91,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
                 
                 guard let newName = ac?.textFields?[0].text else { return }
                 person.name = newName
+                self?.save()
                 self?.collectionView.reloadData()
                 
             })
@@ -109,6 +129,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         
         let person = Person(name: "Unknown", image: imageName)
         people.append(person)
+        self.save()
         collectionView.reloadData()
         
         dismiss(animated: true)
