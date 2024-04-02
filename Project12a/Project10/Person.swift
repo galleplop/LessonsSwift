@@ -7,7 +7,11 @@
 
 import UIKit
 
-class Person: NSObject, NSCoding {
+class Person: NSObject, NSSecureCoding {
+    static var supportsSecureCoding: Bool {
+        return true
+    }
+    
     
 
     var name: String

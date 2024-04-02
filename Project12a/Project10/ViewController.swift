@@ -20,9 +20,8 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         let defaults = UserDefaults.standard
         
         if let savedPeople = defaults.object(forKey: "people") as? Data {
-            if let decodePeople = NSKeyedUnarchiver.unarchiveObject(with: savedPeople) as? [Person]{
+            if let decodePeople = try? NSKeyedUnarchiver.unarchivedArrayOfObjects(ofClasses: [NSString.self, Person.self], from: savedPeople) as? [Person] {
                 
-//                print(decodePeople)
                 people = decodePeople
             }
         }
@@ -105,6 +104,7 @@ class ViewController: UICollectionViewController, UIImagePickerControllerDelegat
         alertController.addAction(UIAlertAction(title: "Delete", style: .destructive) { [weak self] _ in
             
             self?.people.remove(at: indexPath.item)
+            self?.save()
             self?.collectionView.reloadData()
         })
         
