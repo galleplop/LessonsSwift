@@ -31,36 +31,38 @@ class ViewController: UITableViewController {
         if (allWords.isEmpty) {
            
            allWords = ["silkworm"]
-       }
+        }
         
-        startGame()
+        let defaults = UserDefaults.standard
+        
+        if let currentWord = defaults.string(forKey: "currentWord") {
+            
+            title = currentWord
+            usedWords = defaults.array(forKey: "usedWords") as? [String] ?? []
+            
+        } else {
+            
+            startGame()
+        }
     }
     
     @objc func startGame() {
         
         title = allWords.randomElement()
         usedWords.removeAll(keepingCapacity: true)
+        self.save()
         tableView.reloadData()
     }
     
-    
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return usedWords.count
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func save() {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "word", for: indexPath)
+        guard let currentWord = title else { return }
         
-        cell.textLabel?.text = usedWords[indexPath.row]
+        let defaults = UserDefaults.standard
         
-        return cell
+        defaults.setValue(currentWord, forKey: "currentWord")
+        defaults.setValue(usedWords, forKey: "usedWords")
     }
-
     
     @objc func promperForAnswer() {
         
@@ -99,6 +101,7 @@ class ViewController: UITableViewController {
                         if isReal(word: lowerAnswer) {
                             
                             usedWords.insert(lowerAnswer, at: 0)
+                            self.save()
                             let indexPath = IndexPath(row: 0, section: 0)
                             tableView.insertRows(at: [indexPath], with: .automatic)
                             
@@ -176,6 +179,25 @@ class ViewController: UITableViewController {
         let misspelledRange = checker.rangeOfMisspelledWord(in: word, range: range, startingAt: 0, wrap: false, language: "en")
         
         return misspelledRange.location == NSNotFound
+    }
+    
+    //MARK: - UITableViewController implementation
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return usedWords.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "word", for: indexPath)
+        
+        cell.textLabel?.text = usedWords[indexPath.row]
+        
+        return cell
     }
     
 }
