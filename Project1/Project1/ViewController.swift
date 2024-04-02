@@ -16,7 +16,7 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        performSelector(inBackground: #selector(loadPictures), with: nil)
+        self.performSelector(inBackground: #selector(loadPictures), with: nil)
         title = "Storm Viewer"
         navigationController?.navigationBar.prefersLargeTitles = true
         
@@ -47,6 +47,13 @@ class ViewController: UITableViewController {
         
     }
     
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        self.tableView.reloadData()
+    }
+    
     @objc func recomendApp() {
         if #available(iOS 10.3, *) {
             if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
@@ -74,13 +81,28 @@ class ViewController: UITableViewController {
         
         cell.textLabel?.text = pictures[indexPath.row]
         
+        let defaults = UserDefaults.standard
+        
+        let viewCounts = defaults.integer(forKey: "\(pictures[indexPath.row])-viewCounts")
+        cell.detailTextLabel?.text = "#Views: \(viewCounts)"
+        
         return cell
     }
 
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailViewController {
-            vc.selectedImage = pictures[indexPath.row]
+            
+            let nameImage = pictures[indexPath.row]
+            
+            vc.selectedImage = nameImage
+            
+            let defaults = UserDefaults.standard
+            
+            var viewCounts = defaults.integer(forKey: "\(nameImage)-viewCounts")
+            viewCounts += 1
+            defaults.set(viewCounts, forKey: "\(nameImage)-viewCounts")
+            
             navigationController?.pushViewController(vc, animated: true)
         }
     }

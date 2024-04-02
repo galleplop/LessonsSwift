@@ -77,6 +77,17 @@ class ViewController: UIViewController {
         if sender.tag == correctAnswer {
             title = "Correct"
             score += 1
+            
+            let defaults = UserDefaults.standard
+            var highestScore = defaults.integer(forKey: "score")
+            
+            if score > highestScore {
+                
+                title += ", new record!"
+                
+                defaults.set(score, forKey: "score")
+            }
+            
         } else {
             title = "Wrong this is \(countries[sender.tag])"
             score -= 1
