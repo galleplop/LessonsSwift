@@ -161,7 +161,17 @@ class ViewController: UIViewController {
         
         currentAnswer.text = currentAnswer.text?.appending(buttonTitle)
         activatedButtons.append(sender)
-        sender.isHidden = true
+        
+        //Fade out
+        UIView.animate(withDuration: 0.3, delay: 0, animations: {
+            
+            sender.alpha = 0
+        }) { finish in
+            
+            sender.alpha = 1
+            sender.isHidden = true
+        }
+        
     }
     
     @objc func submitTapped(_ sender: UIButton) {
@@ -211,9 +221,10 @@ class ViewController: UIViewController {
         solutions.removeAll(keepingCapacity: true)
         loadLevel()
         
-        for button in letterButtons {
-            button.isHidden = false
-        }
+//        for button in letterButtons {
+//            button.isHidden = false
+//        }
+        self.showFadeIn(buttons: self.letterButtons)
         
     }
     
@@ -226,11 +237,28 @@ class ViewController: UIViewController {
         
         currentAnswer.text = ""
         
-        for button in activatedButtons {
+//        for button in activatedButtons {
+//            button.isHidden = false
+//        }
+        self.showFadeIn(buttons: self.activatedButtons)
+        
+        activatedButtons.removeAll()
+    }
+    
+    func showFadeIn(buttons: [UIButton]) {
+        
+        for button in buttons {
+            button.alpha = 0
             button.isHidden = false
         }
         
-        activatedButtons.removeAll()
+        UIView.animate(withDuration: 0.3, delay: 0) {
+            
+            for button in buttons {
+                
+                button.alpha = 1
+            }
+        }
     }
     
     func isGameCompleted() -> Bool {
