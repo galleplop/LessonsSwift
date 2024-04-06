@@ -24,6 +24,8 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let washington = Capital(title: "Washington DC", coordinate: CLLocationCoordinate2D(latitude: 38.895111, longitude: -77.036667), info: "Named after George himself.")
         
         mapView.addAnnotations([london, oslo, paris, rome, washington])
+        
+        mapView.setCenter(paris.coordinate, animated: true)
     }
 
     //MARK: - MKMapViewDelegate implementation
