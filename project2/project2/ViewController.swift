@@ -72,6 +72,18 @@ class ViewController: UIViewController {
 
     @IBAction func buttonTapped(_ sender: UIButton) {
         
+        
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.3, initialSpringVelocity: 5, animations: {
+            
+            sender.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+        }) { finish in
+            
+            UIView.animate(withDuration: 0.1) {
+                
+                sender.transform = CGAffineTransform.identity
+            }
+        }
+        
         var title: String
         
         if sender.tag == correctAnswer {
@@ -95,7 +107,7 @@ class ViewController: UIViewController {
         
         let alert:UIAlertController
         
-        if (questions%10 == 0) {
+        if (questions % 10 == 0) {
             
             alert = UIAlertController(title: title, message: "Your final score is \(score)/\(questions)", preferredStyle: .alert)
             
