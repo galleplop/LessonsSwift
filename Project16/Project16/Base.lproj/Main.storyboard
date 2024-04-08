@@ -43,6 +43,41 @@
             </objects>
             <point key="canvasLocation" x="1063.3587786259541" y="3.5211267605633805"/>
         </scene>
+        <!--Detail View Controller-->
+        <scene sceneID="Fvg-Ik-deD">
+            <objects>
+                <viewController storyboardIdentifier="DetailView" id="igb-WF-4nD" customClass="DetailViewController" customModule="Project16" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="pg9-or-ZpP">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d9W-ho-4fy">
+                                <rect key="frame" x="0.0" y="59" width="393" height="793"/>
+                                <color key="backgroundColor" red="0.36078431370000003" green="0.38823529410000002" blue="0.4039215686" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="ncN-NX-dAf"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="d9W-ho-4fy" firstAttribute="top" secondItem="ncN-NX-dAf" secondAttribute="top" id="8la-1b-ZS9"/>
+                            <constraint firstItem="ncN-NX-dAf" firstAttribute="trailing" secondItem="d9W-ho-4fy" secondAttribute="trailing" id="kjW-Y5-Qgm"/>
+                            <constraint firstItem="d9W-ho-4fy" firstAttribute="leading" secondItem="ncN-NX-dAf" secondAttribute="leading" id="lYa-TD-oei"/>
+                            <constraint firstAttribute="bottom" secondItem="d9W-ho-4fy" secondAttribute="bottom" id="nHO-zG-qfa"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Njc-D9-W0J"/>
+                    <connections>
+                        <outlet property="webView" destination="d9W-ho-4fy" id="rGC-3V-qXv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ucV-di-xqe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2019" y="4"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="sth-X9-Zd4">
             <objects>
