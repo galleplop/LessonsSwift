@@ -16,6 +16,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var possibleEnemies = ["ball", "hammer", "tv"]
     var gameTimer: Timer?
     var isGameOver = false
+    var isPlayerGrabbed = false
     
     var scoreLabel: SKLabelNode!
     
@@ -41,6 +42,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sprite.physicsBody?.linearDamping = 0
         sprite.physicsBody?.angularDamping = 0
     }
+    
+    //MARK: - SKScene
     
     override func didMove(to view: SKView) {
         
@@ -68,7 +71,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
         
-        gameTimer = Timer.scheduledTimer(timeInterval: 0.35, target: self, selector: #selector(createEnemy), userInfo: nil, repeats: true)
+        gameTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(createEnemy), userInfo: nil, repeats: true)
+        
+        
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -88,20 +93,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        
+        let objects = nodes(at: location)
+        
+        if objects.contains(player) {
+            
+            isPlayerGrabbed = true
+        }
+    }
+    
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         guard let touch = touches.first else { return }
         var location = touch.location(in: self)
         
-        if location.y < 100 {
+        if isPlayerGrabbed {
             
-            location.y = 100
-        } else if location.y > 668 {
+            if location.y < 100 {
+                
+                location.y = 100
+            } else if location.y > 668 {
+                
+                location.y = 668
+            }
             
-            location.y = 668
+            player.position = location
         }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        player.position = location
+        isPlayerGrabbed = false
     }
     
     //MARK: - SKPhysicsContactDelegate
