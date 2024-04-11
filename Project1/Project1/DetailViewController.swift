@@ -17,6 +17,9 @@ class DetailViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         
+        assert(selectedImage != nil)
+        assert(selectedImage != "")
+        
         if let imageToLoad = selectedImage {
             
             imgView.image = UIImage(named: imageToLoad)
