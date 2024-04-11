@@ -27,6 +27,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    var countEnemies = 0
+    
     @objc func createEnemy() {
         
         guard let enemy = possibleEnemies.randomElement() else { return }
@@ -34,6 +36,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let sprite = SKSpriteNode(imageNamed: enemy)
         sprite.position = CGPoint(x: 1200, y: Int.random(in: 50...736))
         addChild(sprite)
+        countEnemies += 1
         
         sprite.physicsBody = SKPhysicsBody(texture: sprite.texture!, size: sprite.size)
         sprite.physicsBody?.categoryBitMask = 1
@@ -41,6 +44,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         sprite.physicsBody?.angularVelocity = 5
         sprite.physicsBody?.linearDamping = 0
         sprite.physicsBody?.angularDamping = 0
+        
+        
+        if countEnemies != 0 && countEnemies % 20 == 0 {
+            
+            //upper bound of 0.2
+            let newTimerEnemies = Double.maximum(1.0 - (Double(countEnemies / 20) * 0.1), 0.2)
+            
+            gameTimer?.invalidate()
+            print("newTimerEnemies = \(newTimerEnemies)")
+            gameTimer = Timer.scheduledTimer(timeInterval: newTimerEnemies, target: self, selector: #selector(createEnemy), userInfo: nil, repeats: true)
+        }
     }
     
     //MARK: - SKScene
@@ -70,6 +84,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         physicsWorld.gravity = .zero
         physicsWorld.contactDelegate = self
+        
+        countEnemies = 0
         
         gameTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(createEnemy), userInfo: nil, repeats: true)
         
@@ -140,5 +156,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         player.removeFromParent()
         isGameOver = true
+        gameTimer?.invalidate()
     }
 }
