@@ -17,6 +17,10 @@ class ViewController: UIViewController {
         
         assert(1 == 1, "Math failure!")
         
+        for i in 1...100 {
+            
+            print("Got number \(i)")
+        }
     }
 
 
