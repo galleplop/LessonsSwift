@@ -14,6 +14,9 @@ class ViewController: UIViewController {
         
         print("1-", terminator: "")
         print(2, 3, 4, 5, separator: "-")
+        
+        assert(1 == 1, "Math failure!")
+        
     }
 
 
