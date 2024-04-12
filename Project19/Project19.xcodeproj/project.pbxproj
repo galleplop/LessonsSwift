@@ -18,6 +18,7 @@
 		6F5129FA2BC8B0AB00E9A71E /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5129F92BC8B0AB00E9A71E /* ActionViewController.swift */; };
 		6F5129FD2BC8B0AB00E9A71E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F5129FB2BC8B0AB00E9A71E /* MainInterface.storyboard */; };
 		6F512A012BC8B0AB00E9A71E /* Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6F5129F22BC8B0AA00E9A71E /* Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6F512A072BC8B6E300E9A71E /* Action.js in Resources */ = {isa = PBXBuildFile; fileRef = 6F512A062BC8B6E300E9A71E /* Action.js */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		6F5129F92BC8B0AB00E9A71E /* ActionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionViewController.swift; sourceTree = "<group>"; };
 		6F5129FC2BC8B0AB00E9A71E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		6F5129FE2BC8B0AB00E9A71E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6F512A062BC8B6E300E9A71E /* Action.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = Action.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				6F5129F92BC8B0AB00E9A71E /* ActionViewController.swift */,
 				6F5129FB2BC8B0AB00E9A71E /* MainInterface.storyboard */,
 				6F5129FE2BC8B0AB00E9A71E /* Info.plist */,
+				6F512A062BC8B6E300E9A71E /* Action.js */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F512A072BC8B6E300E9A71E /* Action.js in Resources */,
 				6F5129F82BC8B0AB00E9A71E /* Media.xcassets in Resources */,
 				6F5129FD2BC8B0AB00E9A71E /* MainInterface.storyboard in Resources */,
 			);
