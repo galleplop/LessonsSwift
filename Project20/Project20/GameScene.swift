@@ -20,9 +20,14 @@ class GameScene: SKScene {
         
         didSet {
             
-            
+            scoreLabel.text = "Score: \(score)"
         }
     }
+    
+    var scoreLabel: SKLabelNode!
+    
+    var numLaunches = 0
+    var maxLaunches = 5
     
     override func didMove(to view: SKView) {
         
@@ -33,6 +38,13 @@ class GameScene: SKScene {
         addChild(background)
         
         gameTimer = Timer.scheduledTimer(timeInterval: 6, target: self, selector: #selector(launchFireworks), userInfo: nil, repeats: true)
+        
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.position = CGPoint(x: 16, y: 16)
+        scoreLabel.horizontalAlignmentMode = .left
+        addChild(scoreLabel)
+        
+        score = 0
         
     }
     
@@ -134,6 +146,13 @@ class GameScene: SKScene {
         default:
             break
         }
+        
+        numLaunches += 1
+        
+        if numLaunches >= maxLaunches {
+            
+            self.gameTimer?.invalidate()
+        }
     }
     
     func checkTouches(_ touches: Set<UITouch>) {
@@ -170,6 +189,11 @@ class GameScene: SKScene {
             
             emitter.position = firework.position
             addChild(emitter)
+            
+            let waitAction = SKAction.wait(forDuration: TimeInterval(1.0))
+            let removeAction = SKAction.removeFromParent()
+            emitter.run(SKAction.sequence([waitAction, removeAction]))
+            
         }
         
         firework.removeFromParent()
