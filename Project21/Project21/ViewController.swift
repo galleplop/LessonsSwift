@@ -41,6 +41,13 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         
         registerCategories()
         
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        
+        requestNotification(withTrigger: trigger)
+    }
+    
+    func requestNotification(withTrigger trigger: UNNotificationTrigger) {
+        
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
         
@@ -50,14 +57,6 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         content.categoryIdentifier = "alarm"
         content.userInfo = ["customData": "fizzbuzz"]
         content.sound = .default
-        
-        var dateComponents = DateComponents()
-        dateComponents.hour = 10
-        dateComponents.minute = 30
-        
-//        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         
@@ -70,7 +69,9 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         center.delegate = self
         
         let show = UNNotificationAction(identifier: "show", title: "Tell me more...", options: .foreground)
-        let category = UNNotificationCategory(identifier: "alarm", actions: [show], intentIdentifiers: [])
+        let remind = UNNotificationAction(identifier: "remind", title: "Remind me later", options: .foreground)
+        
+        let category = UNNotificationCategory(identifier: "alarm", actions: [show, remind], intentIdentifiers: [])
         
         center.setNotificationCategories([category])
     }
@@ -83,18 +84,47 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
             
             print("Custom data received: \(customData)")
             
+            let message: String
+            
             switch response.actionIdentifier {
                 
             case UNNotificationDefaultActionIdentifier:
                 // the user swiped to unlock
                 print("Default identifier")
-                
+                message = "Defaul action"
             case "show":
                 print("Show more information.")
+                message = "Show more action"
+                
+            case "remind":
+                print("Remind me later.")
+                message = "Remind me later action"
+                
+                let today = Date()
+                let calendar = Calendar.current
+                let dateComponents = DateComponents(day: 1)
+                
+                if let tomorrow = calendar.date(byAdding: dateComponents, to: today, wrappingComponents: false) {
+                    
+                    let tomorrowComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: tomorrow)
+                    
+                    let trigger = UNCalendarNotificationTrigger(dateMatching: tomorrowComponents, repeats: false)
+                    
+//                    print("date remind: \(trigger.nextTriggerDate())")
+//                    print("today date: \(Date())")
+//                    print("tomorrow date: \(tomorrow)")
+                    requestNotification(withTrigger: trigger)
+                }
                 
             default:
+                message = "Another action"
                 break
             }
+            
+            let ac = UIAlertController(title: "Notification Action", message: message, preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            
+            self.present(ac, animated: true)
         }
         
         completionHandler()
