@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class ViewController: UIViewController {
 
@@ -35,6 +36,48 @@ class ViewController: UIViewController {
         buttonStyle(button: btn3)
         
         askQuestion()
+        
+        self.authorizationNotifications()
+    }
+    
+    func authorizationNotifications() {
+        
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            
+            if granted {
+                
+                print("Yay!")
+                self.registerNotification()
+            } else {
+                
+                print("D'oh!")
+            }
+        }
+    }
+    
+    func registerNotification() {
+        
+        let center = UNUserNotificationCenter.current()
+        center.removeAllPendingNotificationRequests()
+        
+        var dateComponents = DateComponents()
+        dateComponents.hour = 10
+        dateComponents.minute = 30
+        
+        let content = UNMutableNotificationContent()
+        content.title = "Let's to play"
+        content.body = "Let's review the flag of the countries"
+        content.categoryIdentifier = "alarm"
+        content.userInfo = ["customData": "fizzbuzz"]
+        content.sound = .default
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        
+        center.add(request)
         
     }
 
@@ -91,7 +134,7 @@ class ViewController: UIViewController {
             score += 1
             
             let defaults = UserDefaults.standard
-            var highestScore = defaults.integer(forKey: "score")
+            let highestScore = defaults.integer(forKey: "score")
             
             if score > highestScore {
                 
