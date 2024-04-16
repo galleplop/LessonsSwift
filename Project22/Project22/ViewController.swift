@@ -43,10 +43,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         //you need to add beacon information: uuid major and minor
         let uuid = UUID(uuidString: "2F234454-CF6D-4A0F-ADF2-F4911BA9FFA6")!
-        let beaconRegion = CLBeaconRegion(uuid: uuid, major: 123, minor: 456, identifier: "MyBeacon")
         
-        locationManager?.startMonitoring(for: beaconRegion)
-        locationManager?.startRangingBeacons(in: beaconRegion)
+        let constraint = CLBeaconIdentityConstraint(uuid: uuid, major: 123, minor: 456)
+        
+        locationManager?.startRangingBeacons(satisfying: constraint)
     }
     
     
@@ -79,15 +79,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
-    func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
+    
+    func locationManager(_ manager: CLLocationManager, didRange beacons: [CLBeacon], satisfying beaconConstraint: CLBeaconIdentityConstraint) {
         
         if let beacon = beacons.first {
-            
             update(distance: beacon.proximity)
         } else {
-            
+
             update(distance: .unknown)
         }
+                    
     }
 }
 
