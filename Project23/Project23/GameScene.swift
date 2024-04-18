@@ -42,6 +42,16 @@ class GameScene: SKScene {
     
     var bombSoundEffect: AVAudioPlayer?
     
+    let kRangeXPositionEnemy = 64...960
+    let kOutsideYPosition = -128
+    let kRangeAngularVelocity: ClosedRange<CGFloat> = -3...3
+    let kQuarterScreenWidth = 256.0
+    let kLargeRangeXVelocity = 8...15
+    let kSmallRangeXVelocity = 3...5
+    let kRangeYVelocity = 24...32
+    let kEnemyVelocityFactor = 40
+    let kRadiusColliderEnemy = 64.0
+    
     var popupTime = 0.9
     var sequence = [SequenceType]()
     var sequencePosition = 0
@@ -91,7 +101,7 @@ class GameScene: SKScene {
                     
                     node.removeAllActions()
                     
-                    if node.name == "enemy" {
+                    if node.name == "enemy" || node.name == "enemyPlus" {
                         
                         substractLife()
                     }
@@ -147,12 +157,15 @@ class GameScene: SKScene {
         
         for case let node as SKSpriteNode in nodeAtPoint {
             
-            if node.name == "enemy" {
+            if node.name == "enemy" || node.name == "enemyPlus" {
                 
                 if let emitter = SKEmitterNode(fileNamed: "sliceHitEnemy") {
                     
                     emitter.position = node.position
                     addChild(emitter)
+                    
+                    let delay = SKAction.wait(forDuration: 1)
+                    emitter.run(SKAction.sequence([delay, .removeFromParent()]))
                 }
                 
                 node.name = ""
@@ -166,7 +179,7 @@ class GameScene: SKScene {
                 
                 node.run(sequence)
                 
-                score += 1
+                score += node.name == "enemy" ? 1:2
                 
                 if let index = activeEnemies.firstIndex(of: node) {
                     
@@ -182,6 +195,9 @@ class GameScene: SKScene {
                     
                     emitter.position = bombContainer.position
                     addChild(emitter)
+                    
+                    let delay = SKAction.wait(forDuration: 1)
+                    emitter.run(SKAction.sequence([delay, .removeFromParent()]))
                 }
                 
                 node.name = ""
@@ -359,6 +375,12 @@ class GameScene: SKScene {
             livesImages[2].texture = SKTexture(imageNamed: "sliceLifeGone")
         }
         
+        let gameOver = SKSpriteNode(imageNamed: "gameOver")
+        gameOver.position = CGPoint(x: 512, y: 384)
+        gameOver.zPosition = 5
+        addChild(gameOver)
+        
+        gameOver.run(SKAction.fadeIn(withDuration: 0.6))
     }
     
     func createEnemy(forceBomb: ForceBomb = .random) {
@@ -405,6 +427,12 @@ class GameScene: SKScene {
                 emitter.position = CGPoint(x: 76, y: 64)
                 enemy.addChild(emitter)
             }
+        } else if enemyType == 3 {
+            
+            enemy = SKSpriteNode(imageNamed: "penguinPlus")
+            enemy.name = "enemyPlus"
+            
+            run(SKAction.playSoundFileNamed("launch.caf", waitForCompletion: false))
         } else {
             
             enemy = SKSpriteNode(imageNamed: "penguin")
@@ -415,30 +443,30 @@ class GameScene: SKScene {
         }
         
         //position
-        let randomPosition = CGPoint(x: Int.random(in: 64...960), y: -128)
+        let randomPosition = CGPoint(x: Int.random(in: kRangeXPositionEnemy), y: kOutsideYPosition)
         enemy.position = randomPosition
         
-        let randomAngularVelocity = CGFloat.random(in: -3...3)
+        let randomAngularVelocity = CGFloat.random(in: kRangeAngularVelocity)
         let randomXVelocity: Int
         
-        if randomPosition.x < 256 {
+        if randomPosition.x < kQuarterScreenWidth {
             
-            randomXVelocity = Int.random(in: 8...15)
-        } else if randomPosition.x < 512 {
+            randomXVelocity = Int.random(in: kLargeRangeXVelocity)
+        } else if randomPosition.x < kQuarterScreenWidth * 2 {
             
-            randomXVelocity = Int.random(in: 3...5)
-        } else if randomPosition.x < 768 {
+            randomXVelocity = Int.random(in: kSmallRangeXVelocity)
+        } else if randomPosition.x < kQuarterScreenWidth * 3 {
             
-            randomXVelocity = -Int.random(in: 3...5)
+            randomXVelocity = -Int.random(in: kSmallRangeXVelocity)
         } else {
             
-            randomXVelocity = -Int.random(in: 8...15)
+            randomXVelocity = -Int.random(in: kLargeRangeXVelocity)
         }
         
-        let randomYVelocity = Int.random(in: 24...32)
+        let randomYVelocity = Int.random(in: kRangeYVelocity)
         
-        enemy.physicsBody = SKPhysicsBody(circleOfRadius: 64)
-        enemy.physicsBody?.velocity = CGVector(dx: randomXVelocity * 40, dy: randomYVelocity * 40)
+        enemy.physicsBody = SKPhysicsBody(circleOfRadius: kRadiusColliderEnemy)
+        enemy.physicsBody?.velocity = CGVector(dx: randomXVelocity * kEnemyVelocityFactor, dy: randomYVelocity * kEnemyVelocityFactor)
         enemy.physicsBody?.angularVelocity = randomAngularVelocity
         enemy.physicsBody?.collisionBitMask = 0
         
