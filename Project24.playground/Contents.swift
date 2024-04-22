@@ -1,6 +1,6 @@
 import UIKit
 
-//MARK: Strings are not arrays
+//MARK: - Strings are not arrays
 let name = "Taylor"
 
 for letter in name {
@@ -32,7 +32,7 @@ for i in 0..<name.count {
 
 //it’s always better to use someString.isEmpty rather than someString.count == 0 if you’re looking for an empty string.
 
-//MARK: Working with strings
+//MARK: - Working with strings
 
 
 let password = "123456"
@@ -101,6 +101,56 @@ attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 32), range
 attributedString.addAttribute(.font, value: UIFont.systemFont(ofSize: 40), range: NSRange(location: 15, length: 6))
 
 //MARK: -
+
+//MARK: Challenge
+extension String {
+    
+    func withPrefix(_ prefix: String) -> String {
+        
+        guard !self.hasPrefix(prefix) else { return self }
+        return String(prefix + self)
+    }
+    
+    func withSuffix(_ suffix: String) -> String {
+        
+        guard !self.hasSuffix(suffix) else { return self }
+        return String(self + suffix)
+    }
+}
+
+print("pet".withPrefix("car"))
+print("car".withSuffix("pet"))
+print("carpet".withPrefix("car"))
+print("carpet".withSuffix("pet"))
+
+extension String {
+    
+    var isNumeric: Bool {
+        
+        return Double(self) != nil
+    }
+}
+
+print(Double("test"))
+print(Double("-5.3"))
+print("test".isNumeric)
+print("-5.3".isNumeric)
+print("1".isNumeric)
+print("1/3".isNumeric)
+print("5+3".isNumeric)
+
+extension String {
+    
+    var lines : [Substring] {
+        
+        guard !self.isEmpty else { return [] }
+        return self.split(separator: "\n")
+    }
+}
+
+print("this\nis\na\ntest".lines.count)
+
+
 
 
 
