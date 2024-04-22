@@ -8,13 +8,13 @@
 import UIKit
 import MultipeerConnectivity
 
-class ViewController: UICollectionViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MCSessionDelegate, MCBrowserViewControllerDelegate {
+class ViewController: UICollectionViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, MCSessionDelegate, MCBrowserViewControllerDelegate, MCNearbyServiceAdvertiserDelegate {
 
     var images = [UIImage] ()
     
     var peerID = MCPeerID(displayName: UIDevice.current.name)
     var mcSession: MCSession?
-    var mcAdvertiserAssistant: MCAdvertiserAssistant?
+    var mcNearbyServiceAdvertiser: MCNearbyServiceAdvertiser?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,11 +47,10 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
     
     func startHosting(action: UIAlertAction) {
         
-        guard let mcSession = mcSession else { return }
+        mcNearbyServiceAdvertiser = MCNearbyServiceAdvertiser(peer: peerID, discoveryInfo: nil, serviceType: "hws-project25")
+        mcNearbyServiceAdvertiser?.delegate = self
+        mcNearbyServiceAdvertiser?.startAdvertisingPeer()
         
-        mcAdvertiserAssistant = MCAdvertiserAssistant(serviceType: "hws-project25", discoveryInfo: nil, session: mcSession)
-        
-        mcAdvertiserAssistant?.start()
     }
     
     func joinSession(action: UIAlertAction) {
@@ -116,7 +115,6 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
     
     func session(_ session: MCSession, didReceive stream: InputStream, withName streamName: String, fromPeer peerID: MCPeerID) {
         
-        
     }
     
     func session(_ session: MCSession, didStartReceivingResourceWithName resourceName: String, fromPeer peerID: MCPeerID, with progress: Progress) {
@@ -169,6 +167,21 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
     func browserViewControllerWasCancelled(_ browserViewController: MCBrowserViewController) {
         
         self.dismiss(animated: true)
+    }
+    
+    //MARK: - MCNearbyServiceAdvertiserDelegate implementation
+    
+    func advertiser(_ advertiser: MCNearbyServiceAdvertiser, didReceiveInvitationFromPeer peerID: MCPeerID, withContext context: Data?, invitationHandler: @escaping (Bool, MCSession?) -> Void) {
+        
+        let ac = UIAlertController(title: "Selfie Share", message: "'\(peerID.displayName)' wants to connect.", preferredStyle: .alert)
+        let declineAction = UIAlertAction(title: "Decline", style: .cancel) { [weak self] _ in invitationHandler(false, self?.mcSession) }
+        let acceptAction = UIAlertAction(title: "Accept", style: .default) { [weak self] _ in invitationHandler(true, self?.mcSession) }
+        
+        ac.addAction(declineAction)
+        ac.addAction(acceptAction)
+        
+        present(ac, animated: true)
+        
     }
 }
 
