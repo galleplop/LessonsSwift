@@ -20,8 +20,13 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
         super.viewDidLoad()
         
         title = "Selfie Share"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(importPicture))
+        let cameraBtn = UIBarButtonItem(barButtonSystemItem: .camera, target: self, action: #selector(importPicture))
+        let infoBtn = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(infoSearch))
+        
+        navigationItem.rightBarButtonItems = [cameraBtn, infoBtn]
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(showConnectionPrompt))
+        
+        
         
         mcSession = MCSession(peer: peerID, securityIdentity: nil, encryptionPreference: .required)
         mcSession?.delegate = self
@@ -41,6 +46,25 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
         ac.addAction(UIAlertAction(title: "Host a session", style: .default, handler: startHosting))
         ac.addAction(UIAlertAction(title: "Join a session", style: .default, handler: joinSession))
         ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        self.present(ac, animated: true)
+    }
+    
+    @objc func infoSearch() {
+        
+        guard let mcSession = mcSession else { return }
+        
+        let devices:String
+        
+        if mcSession.connectedPeers.count == 0 {
+            
+            devices = "No device connected"
+        } else {
+            devices = mcSession.connectedPeers.map{$0.displayName}.joined(separator: "\n")
+        }
+        
+        let ac = UIAlertController(title: "Devices connected", message: devices, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .cancel))
         
         self.present(ac, animated: true)
     }
@@ -83,6 +107,10 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
                 do {
                     
                     try mcSession.send(imageData, toPeers: mcSession.connectedPeers, with: .reliable)
+                    
+                    let stringData = Data("Send a message".utf8)
+                    try mcSession.send(stringData, toPeers: mcSession.connectedPeers, with: .reliable)
+                    
                 } catch let error {
                     
                     let ac = UIAlertController(title: "Send error", message: error.localizedDescription, preferredStyle: .alert)
@@ -138,6 +166,15 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
         case .notConnected:
             
             print("Not Connected: \(peerID.displayName)")
+            
+            DispatchQueue.main.async {
+                [weak self] in
+                
+                let ac = UIAlertController(title: "\(peerID.displayName) has disconnected", message: nil, preferredStyle: .alert)
+                ac.addAction(UIAlertAction(title: "OK", style: .cancel))
+                
+                self?.present(ac, animated: true)
+            }
         @unknown default:
             
             print("Unknow state received: \(peerID.displayName)")
@@ -153,6 +190,10 @@ class ViewController: UICollectionViewController, UINavigationControllerDelegate
                 
                 self?.images.insert(image, at: 0)
                 self?.collectionView.reloadData()
+            } else {
+                
+                let message = String(decoding: data, as: UTF8.self)
+                print("Message recived = \(message)")
             }
         }
     }
