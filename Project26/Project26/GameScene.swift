@@ -35,6 +35,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var isGameOver = false
     
+    var level = 1
+    var levelNodes: [SKNode] = []
+    
     //MARK: - SKScene
     override func didMove(to view: SKView) {
         
@@ -53,7 +56,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         addChild(scoreLabel)
         
         
-        loadLevel()
+        loadLevel(levelNum: level)
         createPlayer()
         
         physicsWorld.gravity = .zero
@@ -164,13 +167,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         } else if node.name == "finish" {
             // next level
             
+            if level == 1 {
+                
+                level = 2
+                loadLevel(levelNum: level)
+                player.removeFromParent()
+                createPlayer()
+            }
+            
         }
     }
     
-    func loadLevel() {
+    func loadLevel(levelNum: Int) {
         
-        guard let levelURL = Bundle.main.url(forResource: "level1", withExtension: "txt") else { fatalError("Could not find level1.txt in the app bundle.") }
-        guard let levelString = try? String(contentsOf: levelURL) else { fatalError("Could not load level1.txt from the app bundle.") }
+        guard let levelURL = Bundle.main.url(forResource: "level\(levelNum)", withExtension: "txt") else { fatalError("Could not find level\(levelNum).txt in the app bundle.") }
+        guard let levelString = try? String(contentsOf: levelURL) else { fatalError("Could not load level\(levelNum).txt from the app bundle.") }
+        
+        for levelNode in levelNodes {
+            
+            levelNode.removeFromParent()
+        }
         
         let lines = levelString.components(separatedBy: "\n")
         
@@ -180,28 +196,32 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
                 let position = CGPoint(x: (64 * column) + 32, y: (64 * row) + 32)
                 
+                let node: SKNode?
+                
                 if letter == "x" {
                     //load a wall
-                    let node = createBlock(at: position)
-                    addChild(node)
+                    node = createBlock(at: position)
                 } else if letter == "v" {
                     //load a vortex
-                    let node = createVortex(at: position)
-                    addChild(node)
+                    node = createVortex(at: position)
                 } else if letter == "s" {
                     //load start point
-                    let node = createStart(at: position)
-                    addChild(node)
+                    node = createStart(at: position)
                 } else if letter == "f" {
                     //load finish point
-                    let node = createFinish(at: position)
-                    addChild(node)
+                    node = createFinish(at: position)
                 } else if letter == " " {
                     //this is an empty space - do nothing
-                    
+                    node = nil
                 } else {
                     
                     fatalError("Unknow level letter: \(letter)")
+                }
+                
+                if let node = node {
+                    
+                    levelNodes.append(node)
+                    addChild(node)
                 }
             }
         }

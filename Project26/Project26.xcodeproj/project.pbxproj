@@ -15,6 +15,7 @@
 		6F512AE32BD70E8400E9A71E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F512AE22BD70E8400E9A71E /* Assets.xcassets */; };
 		6F512AE62BD70E8400E9A71E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6F512AE42BD70E8400E9A71E /* LaunchScreen.storyboard */; };
 		6F512AEE2BD70FB000E9A71E /* level1.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F512AED2BD70FB000E9A71E /* level1.txt */; };
+		6F512AF02BDC68AC00E9A71E /* level2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F512AEF2BDC68AC00E9A71E /* level2.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		6F512AE22BD70E8400E9A71E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6F512AE52BD70E8400E9A71E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6F512AED2BD70FB000E9A71E /* level1.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = level1.txt; sourceTree = "<group>"; };
+		6F512AEF2BDC68AC00E9A71E /* level2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = level2.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				6F512AED2BD70FB000E9A71E /* level1.txt */,
+				6F512AEF2BDC68AC00E9A71E /* level2.txt */,
 			);
 			path = Info;
 			sourceTree = "<group>";
@@ -139,6 +142,7 @@
 			files = (
 				6F512AEE2BD70FB000E9A71E /* level1.txt in Resources */,
 				6F512AE12BD70E8100E9A71E /* Main.storyboard in Resources */,
+				6F512AF02BDC68AC00E9A71E /* level2.txt in Resources */,
 				6F512AD82BD70E8100E9A71E /* GameScene.sks in Resources */,
 				6F512AE32BD70E8400E9A71E /* Assets.xcassets in Resources */,
 				6F512AE62BD70E8400E9A71E /* LaunchScreen.storyboard in Resources */,
